@@ -14,15 +14,18 @@ Example:
     $ python main.py
 """
 
+
 from flask import Flask
 from colorama import Fore, Style
+import os
 
 from config_parse import config
 from webroutes import web_bp
 from azure import azure_bp
 
-# Create a Flask web app
+# Flask web app; Secret key is used for session management
 app = Flask(__name__)
+app.secret_key = os.getenv('api_master_pw')
 
 # Validate the configuration
 if config.config_exists is False:

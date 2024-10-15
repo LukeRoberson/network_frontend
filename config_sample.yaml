@@ -1,0 +1,17 @@
+# Sample config file
+# Copy this file to config.yaml and update the values as needed
+
+azure:
+  app-id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  app-secret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  redirect-uri: /getAToken
+  tenant-id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  admin-group: Admins
+  helpdesk-group: Helpdesk
+web:
+  debug: true
+  ip: 0.0.0.0
+  port: '5000'
+api:
+  ip: 1.2.3.4
+  port: '5010'
