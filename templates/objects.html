@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Navigation bar -->
+<div class="w3-bar w3-border w3-card mini-nav">
+    <a href="#" class="w3-bar-item w3-button" id="nav-tags">Tags</a>
+    <a href="#" class="w3-bar-item w3-button" id="nav-addresses">Addresses</a>
+    <a href="#" class="w3-bar-item w3-button" id="nav-addressGroups">Address Groups</a>
+    <a href="#" class="w3-bar-item w3-button" id="nav-applicationGroups">Application Groups</a>
+    <a href="#" class="w3-bar-item w3-button" id="nav-services">Services</a>
+    <a href="#" class="w3-bar-item w3-button" id="nav-serviceGroups">Service Groups</a>
+</div>
+
+<!-- Dynamic content goes in here -->
+<div id="content-container">
+    <div id="tags-content">{% include "tags.html" %}</div>
+    <div id="addresses-content" style="display: none;">{% include "addresses.html" %}</div>
+    <div id="addressGroups-content" style="display: none;">{% include "address_groups.html" %}</div>
+    <div id="applications-content" style="display: none;">{% include "applications.html" %}</div>
+    <div id="services-content" style="display: none;">{% include "services.html" %}</div>
+    <div id="serviceGroup-content" style="display: none;">{% include "service_groups.html" %}</div>
+</div>
+
+<!-- Javascript function to show and hide the dynamic content -->
+<script>
+    function showContent(contentId) {
+        // Hide all content
+        document.querySelectorAll('#content-container > div').forEach(div => {
+            div.style.display = 'none';
+        });
+
+        // Show the requested content
+        document.getElementById(contentId).style.display = 'block';
+    }
+
+    // Event listeners for navigation items
+    document.getElementById('nav-tags').addEventListener('click', function () {
+        clearLines();
+        setSvgDimensions();
+        showContent('tags-content');
+    });
+    document.getElementById('nav-addresses').addEventListener('click', function () {
+        clearLines();
+        setSvgDimensions();
+        showContent('addresses-content');
+    });
+    document.getElementById('nav-addressGroups').addEventListener('click', function () {
+        clearLines();
+        setSvgDimensions();
+        showContent('addressGroups-content');
+    });
+    document.getElementById('nav-applicationGroups').addEventListener('click', function () {
+        clearLines();
+        setSvgDimensions();
+        showContent('applications-content');
+    });
+    document.getElementById('nav-services').addEventListener('click', function () {
+        clearLines();
+        setSvgDimensions();
+        showContent('services-content');
+    });
+    document.getElementById('nav-serviceGroups').addEventListener('click', function () {
+        clearLines();
+        setSvgDimensions();
+        showContent('serviceGroup-content');
+    });
+</script>
+
+<!-- Event handlers for comparing objects -->
+<script>
+    // Setup comparison for tags
+    document.getElementById('tagCompare').addEventListener('click', function () {
+        setupComparison('tagAccordionA', 'tagAccordionB', tagListA, tagListB);
+    });
+
+    // Setup comparison for addresses
+    document.getElementById('addressObjectsCompare').addEventListener('click', function () {
+        setupComparison('addressAccordionA', 'addressAccordionB', addressListA, addressListB);
+    });
+
+    // Setup comparison for address groups
+    document.getElementById('addressGroupCompare').addEventListener('click', function () {
+        setupComparison('addressGroupAccordionA', 'addressGroupAccordionB', addressGroupListA, addressGroupListB);
+    });
+
+    // Setup comparison for application groups
+    document.getElementById('applicationGroupCompare').addEventListener('click', function () {
+        setupComparison('applicationGroupAccordionA', 'applicationGroupAccordionB', applicationGroupListA, applicationGroupListB);
+    });
+
+    // Setup comparison for services
+    document.getElementById('serviceObjectCompare').addEventListener('click', function () {
+        setupComparison('serviceAccordionA', 'serviceAccordionB', serviceListA, serviceListB);
+    });
+
+    // Setup comparison for service groups
+    document.getElementById('serviceGroupCompare').addEventListener('click', function () {
+        setupComparison('serviceGroupAccordionA', 'serviceGroupAccordionB', serviceGroupListA, serviceGroupListB);
+    });
+</script>
+
+<!-- External Javascript files -->
+<script src="{{ url_for('static', filename='js/objects.js') }}"></script>
+<script src="{{ url_for('static', filename='js/compare.js') }}"></script>
+
+{% endblock %}

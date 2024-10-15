@@ -1,0 +1,506 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Info Cards -->
+<div class="w3-row-padding w3-margin-bottom">
+    <header class="w3-container" style="padding-top:22px">
+        <h2><b>
+                <i class="fa fa-dashboard"></i> Device Dashboard
+            </b></h2>
+    </header>
+
+    <!-- Panel #1 - Device Count -->
+    <div class="w3-quarter">
+        <a href="#devicesSection" style="text-decoration: none;">
+            <div class="w3-container w3-red w3-padding-16">
+                <div class="w3-left">
+                    <i class="fa-solid fa-list-ol w3-xxxlarge"></i>
+                </div>
+                <div class="w3-right">
+                    <h2>{{ device_count }}</h2>
+                </div>
+                <div class="w3-clear"></div>
+                <h4>Device Count</h4>
+            </div>
+        </a>
+    </div>
+
+    <!-- Panel #2 - Site Count -->
+    <div class="w3-quarter">
+        <a href="#sitesSection" style="text-decoration: none;">
+            <div class="w3-container w3-blue w3-padding-16">
+                <div class="w3-left">
+                    <i class="fa fa-building-shield w3-xxxlarge"></i>
+                </div>
+                <div class="w3-right">
+                    <h2>{{ site_count }}</h2>
+                </div>
+                <div class="w3-clear"></div>
+                <h4>Site Count</h4>
+            </div>
+        </a>
+    </div>
+
+    <!-- Panel #3 - HA Count -->
+    <div class="w3-quarter">
+        <a href="#haSection" style="text-decoration: none;">
+            <div class="w3-container w3-teal w3-padding-16">
+                <div class="w3-left">
+                    <i class="fa fa-share-alt w3-xxxlarge"></i>
+                </div>
+                <div class="w3-right">
+                    <h2>{{ ha_count }}</h2>
+                </div>
+                <div class="w3-clear"></div>
+                <h4>HA Pairs</h4>
+            </div>
+        </a>
+    </div>
+
+    <!-- Panel #4 - Future Use -->
+    <div class="w3-quarter">
+        <a href="#devicesSection" style="text-decoration: none;">
+            <div class="w3-container w3-orange w3-padding-16">
+                <div class="w3-left">
+                    <i class="fa fa-share-alt w3-xxxlarge"></i>
+                </div>
+                <div class="w3-right">
+                    <h2>0</h2>
+                </div>
+                <div class="w3-clear"></div>
+                <h4>Future Panel</h4>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Device List -->
+<br>
+<hr>
+<div class="w3-row-padding w3-margin-bottom">
+    <header class="w3-container collapsible-header" id="devicesSection" data-card-type="device-card">
+        <h2>Devices <i class="fas fa-chevron-down collapse-icon" style="font-size: 0.75em;"></i></h2>
+    </header>
+
+    <!-- Populate device cards from the list -->
+    {% for device in device_list|sort(attribute='name') %}
+    <div class="w3-half">
+        <div class="w3-container w3-padding-16 device-card">
+            <div class="w3-card">
+                <header class="w3-container">
+                    <div class="header-content">
+                        <h3>{{ device.name }}</h3>
+                        <div class="icon-links">
+                            <a href="http://{{ device.hostname }}" target="_blank" class="icon-link"
+                                title="Open {{ device.hostname }} in a new tab">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                            <a href="ssh://{{ device.hostname }}" target="_blank" class="icon-link"
+                                title="Connect to {{ device.hostname }} via SSH">
+                                <i class="fas fa-terminal"></i>
+                            </a>
+                        </div>
+                    </div>
+                </header> <br>
+                <div class="w3-container">
+                    <table class="w3-table">
+                        <tr>
+                            <td><b>Site</b></td>
+                            <td>{{ device.site_name }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Site ID</b></td>
+                            <td>{{ device.site }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Vendor</b></td>
+                            <td>{{ device.full_vendor }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Model</b></td>
+                            <td>{{ device.model }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Serial</b></td>
+                            <td>{{ device.serial }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Version</b></td>
+                            <td>{{ device.version }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>HA enabled</b></td>
+                            <td>{{ device.ha_enabled }}</td>
+                        </tr>
+                        {% if device.ha_enabled %}
+                        <tr>
+                            <td><b>HA State</b></td>
+                            <td>{{ device.ha_local_state }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>HA Partner</b></td>
+                            <td>{{ device.ha_peer_serial }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>HA Partner State</b></td>
+                            <td>{{ device.ha_peer_state }}</td>
+                        </tr>
+                        {% endif %}
+                    </table>
+                </div>
+                <br>
+                <footer>
+                    <div class="w3-bar w3-center w3-padding-16">
+                        <button data-id="{{ device.id }}" class="w3-button w3-round device-download-button"
+                            style="width:30%">Download Config</button>
+                        <button data-id="{{ device.id }}" data-device-name="{{ device.name }}"
+                            data-device-hostname="{{ device.hostname }}" data-device-site="{{ device.site }}"
+                            data-device-vendor="{{ device.vendor }}" data-device-key="{{ device.key }}"
+                            data-device-user="{{ device.username }}" class="w3-button w3-round device-edit-button"
+                            style="width:30%">Edit</button>
+                        <button data-id="{{ device.id }}" class="w3-button w3-round device-delete-button"
+                            style="width:30%">Delete</button>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="w3-container w3-padding-16 device-card">
+        <div class="w3-card">
+            <header class="w3-container">
+                <h3>No Devices Found</h3>
+            </header>
+        </div>
+    </div>
+    {% endfor %}
+    <button class="w3-button w3-block w3-green" id="add_device">Add Device</button>
+    <button class="w3-button w3-block w3-blue" id="refresh_device">Refresh Device List</button>
+</div>
+
+<!-- HA Pair List -->
+<br>
+<hr>
+<div class="w3-row-padding w3-margin-bottom">
+    <header class="w3-container collapsible-header" id="haSection" data-card-type="ha-card">
+        <h2>HA Pairs <i class="fas fa-chevron-down collapse-icon" style="font-size: 0.75em;"></i></h2>
+    </header>
+
+    <!-- Create cards for HA pairs -->
+    {% for pair in ha_list %}
+    <div class="w3-third">
+        <div class="w3-container w3-padding-16 ha-card">
+            <div class="w3-card">
+                <header class="w3-container">
+                    <h3>HA Pair</h3>
+                </header>
+                <br>
+                <div class="w3-container">
+                    <table class="w3-table">
+                        <tr>
+                            <td><b>Active Member</b></td>
+                            <td>{{ pair.active }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Standby Member</b></td>
+                            <td>{{ pair.passive }}</td>
+                        </tr>
+                    </table>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="w3-container w3-padding-16 ha-card"> <!-- Changed class to ha-card for consistency -->
+        <div class="w3-card">
+            <header class="w3-container">
+                <h3>No HA Pairs Found</h3>
+            </header>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Site List -->
+<br>
+<hr>
+<div class="w3-row-padding w3-margin-bottom">
+    <div class="w3-container">
+        <header class="w3-container collapsible-header" id="sitesSection" data-card-type="site-card">
+            <h2>Sites <i class="fas fa-chevron-down collapse-icon" style="font-size: 0.75em;"></i></h2>
+        </header>
+
+        <!-- Site Cards -->
+        {% for site in site_list|sort(attribute='name') %}
+        <div class="w3-third">
+            <div class="w3-container w3-padding-16 site-card">
+                <div class="w3-card">
+                    <header class="w3-container">
+                        <h3>{{ site.site_name }}</h3>
+                    </header>
+                    <br>
+                    <div class="w3-container">
+                        <table class="w3-table">
+                            <tr>
+                                <td><b>ID</b></td>
+                                <td>{{ site.site_id }}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Device Count</b></td>
+                                <td>{{ site.device_count }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br>
+                    <footer>
+                        <div class="w3-bar w3-center w3-padding-16">
+                            <button data-id="{{ site.site_id }}" id="edit_site" data-site-name="{{ site.site_name }}"
+                                class="w3-button w3-round site-edit-button" style="width:45%">Edit</button>
+                            <button data-id="{{ site.site_id }}" class="w3-button w3-round site-delete-button"
+                                style="width:45%"">Delete</button>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class=" w3-container w3-padding-16 device-card">
+                                <div class="w3-card">
+                                    <header class="w3-container">
+                                        <h3>No Devices Found</h3>
+                                    </header>
+                                </div>
+                        </div>
+                        {% endfor %}
+                        <button class="w3-button w3-block w3-green" id="add_site">Add Site</button>
+                        <button class="w3-button w3-block w3-blue" id="refresh_site">Refresh Site List</button>
+                </div>
+            </div>
+
+            <!-- The Add Device Modal -->
+            <div id="deviceModal" class="w3-modal">
+                <div class="w3-modal-content w3-card w3-animate-zoom" style="max-width:600px">
+                    <div class="w3-center"><br>
+                        <span onclick="document.getElementById('deviceModal').style.display='none'"
+                            class="w3-button w3-xlarge w3-hover-red w3-display-topright"
+                            title="Close Modal">&times;</span>
+                        <h3>Add Device</h3>
+                    </div>
+
+                    <form class="w3-container">
+                        <div class="w3-section">
+                            <label>
+                                <b>Device Name</b>
+                                <input class="w3-input w3-border w3-margin-bottom" type="text"
+                                    placeholder="Friendly Name" name="deviceName" required>
+                            </label>
+
+                            <label>
+                                <b>Hostname</b>
+                                <input class="w3-input w3-border w3-margin-bottom" type="text"
+                                    placeholder="Hostname of IP of the device" name="hostName" required>
+                            </label>
+
+                            <!-- The site selection drop-down -->
+                            <label>
+                                <b>Site Membership</b>
+                                <select id="siteMember" class="w3-input w3-border w3-margin-bottom" type="text"
+                                    placeholder="The device this belongs to" name="siteMember" required>
+                                    <!-- Content dynamically added here -->
+                                </select>
+                            </label>
+
+                            <!-- The vendor selection drop-down -->
+                            <label>
+                                <b>Vendor</b>
+                                <select id="deviceVendor" class="w3-input w3-border w3-margin-bottom" type="text"
+                                    name="deviceVendor" required>
+                                    <option value="" selected disabled>Select device vendor...</option>
+                                    <option value="paloalto">Palo Alto</option>
+                                    <option value="juniper">Juniper</option>
+                                </select>
+                            </label>
+
+                            <label>
+                                <b>API Key (REST API)</b>
+                                <input class="w3-input w3-border w3-margin-bottom" type="text"
+                                    placeholder="API key to access the device" name="apiKey" required>
+                            </label>
+
+                            <label>
+                                <b>Username (XML API)</b>
+                                <input class="w3-input w3-border w3-margin-bottom" type="text"
+                                    placeholder="API key to access the device" name="apiUser" required>
+                            </label>
+
+                            <label>
+                                <b>Password (XML API)</b>
+                                <input class="w3-input w3-border w3-margin-bottom" type="password"
+                                    placeholder="API key to access the device" name="apiPass" required>
+                            </label>
+
+                            <button id="deviceSubmit" class="w3-button w3-block w3-green w3-section w3-padding"
+                                type="submit">Submit</button>
+                        </div>
+                    </form>
+
+                    <div class="w3-container w3-border-top w3-padding-16">
+                        <button onclick="document.getElementById('deviceModal').style.display='none'" type="button"
+                            class="w3-button w3-red">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The Edit Device Modal -->
+            <div id="deviceEditModal" class="w3-modal">
+                <div class="w3-modal-content w3-card w3-animate-zoom" style="max-width:600px">
+                    <div class="w3-center"><br>
+                        <span onclick="document.getElementById('deviceEditModal').style.display='none'"
+                            class="w3-button w3-xlarge w3-hover-red w3-display-topright"
+                            title="Close Modal">&times;</span>
+                        <h3>Edit Device</h3>
+                    </div>
+
+                    <form class="w3-container">
+                        <div class="w3-section">
+                            <label>
+                                <b>Device Name</b>
+                                <input class="w3-input w3-border w3-margin-bottom" type="text" name="deviceEditName"
+                                    required>
+                            </label>
+
+                            <label>
+                                <b>Hostname</b>
+                                <input class="w3-input w3-border w3-margin-bottom" type="text" name="hostNameEdit"
+                                    required>
+                            </label>
+
+                            <!-- The site selection drop-down -->
+                            <label>
+                                <b>Site Membership</b>
+                                <select id="siteMemberEdit" class="w3-input w3-border w3-margin-bottom" type="text"
+                                    name="siteMemberEdit" required>
+                                    <!-- Content dynamically added here -->
+                                </select>
+                            </label>
+
+                            <!-- The vendor selection drop-down -->
+                            <label>
+                                <b>Vendor</b>
+                                <select id="deviceVendorEdit" class="w3-input w3-border w3-margin-bottom" type="text"
+                                    name="deviceVendorEdit" required>
+                                    <option value="paloalto">Palo Alto</option>
+                                    <option value="juniper">Juniper</option>
+                                </select>
+                            </label>
+
+                            <label>
+                                <b>API Key (REST API)</b>
+                                <input class="w3-input w3-border w3-margin-bottom" type="text" name="apiKeyEdit"
+                                    required>
+                            </label>
+
+                            <label>
+                                <b>Username (XML/NETCONF API)</b>
+                                <input class="w3-input w3-border w3-margin-bottom" type="text" name="apiUserEdit">
+                            </label>
+
+                            <label>
+                                <b>Password (XML/NETCONF API)</b>
+                                <input class="w3-input w3-border w3-margin-bottom" type="password" name="apiPassEdit">
+                                <input type="hidden" name="deviceEditId" id="deviceEditId">
+                            </label>
+
+                            <button id="deviceEditSubmit" class="w3-button w3-block w3-green w3-section w3-padding"
+                                type="submit">Submit</button>
+                        </div>
+                    </form>
+
+                    <div class="w3-container w3-border-top w3-padding-16">
+                        <button onclick="document.getElementById('deviceEditModal').style.display='none'" type="button"
+                            class="w3-button w3-red">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The Add Site Modal -->
+            <div id="siteModal" class="w3-modal">
+                <div class="w3-modal-content-regular w3-card w3-animate-zoom" style="max-width:600px">
+                    <div class="w3-center"><br>
+                        <span onclick="document.getElementById('siteModal').style.display='none'"
+                            class="w3-button w3-xlarge w3-hover-red w3-display-topright"
+                            title="Close Modal">&times;</span>
+                        <h3>Add Site</h3>
+                    </div>
+
+                    <form class="w3-container">
+                        <div class="w3-section">
+                            <label>
+                                <b>Site Name</b>
+                                <input class="w3-input w3-border w3-margin-bottom" type="text"
+                                    placeholder="Enter the name of the site" name="siteName" required>
+                            </label>
+                            <button id="siteSubmit" class="w3-button w3-block w3-green w3-section w3-padding"
+                                type="submit">Submit</button>
+                        </div>
+                    </form>
+
+                    <div class="w3-container w3-border-top w3-padding-16">
+                        <button onclick="document.getElementById('siteModal').style.display='none'" type="button"
+                            class="w3-button w3-red">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The Edit Site Modal -->
+            <div id="siteEditModal" class="w3-modal">
+                <div class="w3-modal-content-regular w3-card w3-animate-zoom" style="max-width:600px">
+                    <div class="w3-center"><br>
+                        <span onclick="document.getElementById('siteEditModal').style.display='none'"
+                            class="w3-button w3-xlarge w3-hover-red w3-display-topright"
+                            title="Close Modal">&times;</span>
+                        <h3>Edit Site</h3>
+                    </div>
+
+                    <form class="w3-container">
+                        <div class="w3-section">
+                            <label>
+                                <b>Site Name</b>
+                                <input class="w3-input w3-border w3-margin-bottom" type="text" name="siteEditName"
+                                    required>
+                                <input type="hidden" name="siteEditId" id="siteEditId">
+                            </label>
+                            <button id="siteEditSubmit" class="w3-button w3-block w3-green w3-section w3-padding"
+                                type="submit">Submit</button>
+                        </div>
+                    </form>
+
+                    <div class="w3-container w3-border-top w3-padding-16">
+                        <button onclick="document.getElementById('siteEditModal').style.display='none'" type="button"
+                            class="w3-button w3-red">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirmation Modal -->
+            <div id="confirmModal" class="w3-modal">
+                <div class="w3-card confirm-modal w3-animate-zoom">
+                    <div class="w3-center"><br>
+                        <h3>Are you sure?</h3>
+                    </div>
+
+                    <div class="button-container">
+                        <button id="confirmDelete"
+                            class="w3-button w3-block w3-red w3-section w3-padding">Delete</button>
+                        <button id="confirmCancel"
+                            class="w3-button w3-block w3-green w3-section w3-padding">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- This script is specific to this page -->
+            <script src="{{ url_for('static', filename='js/devices.js') }}"></script>
+
+            {% endblock %}

@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="w3-container" name="Azure Settings">
+    <div class="w3-container">
+        <h2>Azure Settings</h2>
+    </div>
+    <form id="settings-azure" class="w3-panel w3-card" method="post">
+        <p>
+            <label>Tenant ID</label>
+            <input class="w3-input w3-border" type="text" name="tenant_id" value="{{ tenant_id }}">
+        </p>
+        <p>
+            <label>Application ID</label>
+            <input class="w3-input w3-border" type="text" name="app_id" value="{{ app_id }}">
+        </p>
+        <p>
+            <label>Application Secret</label>
+            <input class="w3-input w3-border" type="text" name="app_secret" value="{{ app_secret }}">
+        </p>
+        <p>
+            <label>Callback URL</label>
+            <input class="w3-input w3-border" type="text" name="callback_url" value="{{ callback_url }}">
+        </p>
+        <p>
+            <label>Admin Group</label>
+            <input class="w3-input w3-border" type="text" name="admin_group" value="{{ web_admin_group }}">
+        </p>
+        <p>
+            <label>Helpdesk Group</label>
+            <input class="w3-input w3-border" type="text" name="helpdesk_group" value="{{ web_helpdesk_group }}">
+        </p>
+        <p>
+            <button type="submit" id="saveAzure" class="w3-btn w3-green w3-round">Save</button>
+        </p>
+    </form>
+
+    <!-- Display result message -->
+    <div id="message"></div>
+</div>
+<br>
+
+<div class="w3-container" name="API Settings">
+    <div class="w3-container">
+        <h2>API Settings</h2>
+    </div>
+    <form id="settings-api" class="w3-panel w3-card">
+        <p>
+            <label>IP/FQDN</label>
+            <input class="w3-input w3-border" type="text" name="api_ip" value="{{ api_ip }}">
+        </p>
+        <p>
+            <label>API Port</label>
+            <input class="w3-input w3-border" type="text" name="api_port" value="{{ api_port }}">
+        </p>
+        <p>
+            <button id="saveApi" class="w3-btn w3-green w3-round">Save</button>
+        </p>
+    </form>
+</div>
+<br>
+
+<div class="w3-container" name="General Settings">
+    <div class="w3-container">
+        <h2>General Settings</h2>
+    </div>
+    <form id="settings-web" class="w3-panel w3-card">
+        <p>
+            <label>Local IP</label>
+            <input class="w3-input w3-border" type="text" name="web_ip" value="{{ web_ip }}">
+        </p>
+        <p>
+            <label>Local Port</label>
+            <input class="w3-input w3-border" type="text" name="web_port" value="{{ web_port }}">
+        </p>
+        <p>
+            <label>Debug Mode</label>
+            <input class="w3-radio" name="web_debug" type="radio" value="on" {% if web_debug %}checked{% endif %}>
+            <label>On</label>
+            <input class="w3-radio" name="web_debug" type="radio" value="off" {% if not web_debug %}checked{% endif %}>
+            <label>Off</label>
+        </p>
+        <p>
+            <button id="saveWeb" class="w3-btn w3-green w3-round">Save</button>
+        </p>
+    </form>
+</div>
+<br>
+
+<div class="w3-container" name="Master Password">
+    <div class="w3-container">
+        <h2>Master Password</h2>
+    </div>
+    <div class="w3-panel w3-pale-yellow w3-padding w3-border" role="alert">
+        <strong>Warning!</strong>
+        <p>The master password is used to encrypt and decrypt passwords and API keys stored in the database.</p>
+        <p>If the master password is lost, a new one will need to be set. All devices will need to have secure
+            credentials
+            added again, so they're encrypted with the new master password</p>
+        <br>
+        <p>Resetting the master password below will decrypt credentials with the current Master PW, and reencrypt with
+            the
+            new Master PW</p>
+        <p>If you do this, make sure you update the environment variable</p>
+        <p>
+            <button id="resetMasterPw" class="w3-button w3-red w3-padding w3-round" type="submit">Reset Master
+                Password</button>
+        </p>
+    </div>
+</div>
+
+<!-- Master PW Modal -->
+<div id="pwModal" class="w3-modal">
+    <div class="w3-modal-content w3-card w3-animate-zoom" style="max-width:600px">
+        <div class="w3-center"><br>
+            <span onclick="document.getElementById('pwModal').style.display='none'"
+                class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
+            <h3>Reset Master Password</h3>
+        </div>
+
+        <div class="w3-container w3-border-top w3-padding-16">
+            <p>This is the new master password. Proceeding will reencrypt device details in the database</p>
+            <p><strong>Copy it and store it in a safe place. It will not be retrievable again</strong></p>
+            <br>
+            <div class="w3-center">
+                <div class="input-group">
+                    <input id="masterPassword" class="w3-input w3-border" type="text" name="master_password" readonly>
+                    <button onclick="copyToClipboard()" class="w3-button w3-small w3-round w3-blue" title="Copy"><i
+                            class="fa fa-copy"></i></button>
+                </div>
+                <br>
+            </div>
+
+            <p>Remember to update enviroment variable settings.</p>
+
+            <div class="w3-center">
+                <button onclick="document.getElementById('pwModal').style.display='none'" type="button"
+                    class="w3-button w3-red">Cancel</button>
+                <button id="saveMasterPw" type="button" class="w3-button w3-green">Proceed</button>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+
+<!-- Set the SQL dropdown values -->
+<script>
+    // Set SQL Authentication value; 'Windows Integrated' or 'SQL'
+    const sqlAuthValue = "{{ sql_auth }}";
+
+    // Dropdown select element for the SQL Authentication type
+    const sqlAuthSelect = document.querySelector('select[name="sql_auth"]');
+
+    // Username and Password input fields for SQL Authentication
+    const sqlUser = document.getElementById('sql_user');
+    const sqlPass = document.getElementById('sql_pass');
+
+    // Set the SQL Authentication value and display the Username and Password input fields depending on the initial settings
+    if (sqlAuthValue === "Windows Integrated") {
+        sqlAuthSelect.value = "Windows Integrated";
+        sqlUser.style.display = "none";
+        sqlPass.style.display = "none";
+    } else if (sqlAuthValue === "SQL") {
+        sqlAuthSelect.value = "SQL";
+        sqlUser.style.display = "block";
+        sqlPass.style.display = "block";
+    } else {
+        sqlAuthSelect.value = "none";
+        sqlUser.style.display = "none";
+        sqlPass.style.display = "none";
+    }
+
+    // Show or hide the Username and Password input fields depending on the selected SQL Authentication type
+    sqlAuthSelect.addEventListener('change', function () {
+        if (sqlAuthSelect.value === "Windows Integrated") {
+            sqlUser.style.display = "none";
+            sqlPass.style.display = "none";
+        } else if (sqlAuthSelect.value === "SQL") {
+            sqlUser.style.display = "block";
+            sqlPass.style.display = "block";
+        } else {
+            sqlUser.style.display = "none";
+            sqlPass.style.display = "none";
+        }
+    });
+</script>
+
+<!-- Master password scripts -->
+<script>
+    function copyToClipboard() {
+        const input = document.querySelector('input[name="master_password"]');
+        input.select();
+        input.setSelectionRange(0, 99999); // For mobile devices
+        document.execCommand("copy");
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,125 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Management</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animation.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        integrity="sha384-..." crossorigin="anonymous">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script>const API_BASE_URL = "{{ api_base_url }}"</script>
+    <script defer>
+        // Restore the navigation bar state from the local storage
+        window.onload = function () {
+            restoreNavState();
+        };
+
+        // Immediately apply the saved theme to avoid FOUC (Flash of Unstyled Content)
+        (function () {
+            var currentTheme = localStorage.getItem('theme') || 'light-mode';
+            document.documentElement.className = currentTheme;
+        })();
+    </script>
+</head>
+
+<body>
+    <!-- SVG to draw lines -->
+    <svg id="lines-svg" style="position: absolute; top: 0; left: 0; pointer-events: none; z-index: 1000"></svg>
+
+    <!-- Header at the top of the screen -->
+    <header class="header">
+        {% if debug_mode %}
+        <span class="debug-icon" title="Debug Mode Active">🐞</span>
+        {% endif %}
+        <div style="flex-grow: 1; text-align: center;">
+            <h2>Firewall Management</h2>
+        </div>
+        <label class="switch">
+            <input type="checkbox" id="mode-toggle">
+            <span class="slider round"></span>
+        </label>
+    </header>
+
+    <!-- Navigation bar on the left -->
+    <nav class="nav-bar" id="navBar">
+        <div class="nav-item">
+            <a href="/devices">
+                <span class="nav-icon"><i class="fas fa-network-wired"></i></span>
+                <span class="nav-text">Devices</span>
+            </a>
+        </div>
+        <br>
+
+        <div class="nav-item">
+            <a href="/objects">
+                <span class="nav-icon"><i class="fas fa-list"></i></span>
+                <span class="nav-text">Objects</span>
+
+            </a>
+        </div>
+        <br>
+
+        <div class="nav-item">
+            <a href="/policies">
+                <span class="nav-icon"><i class="fas fa-book"></i></span>
+                <span class="nav-text">Policies</span>
+
+            </a>
+        </div>
+        <br>
+
+        <div class="nav-item">
+            <a href="/globalprotect">
+                <span class="nav-icon"><i class="fas fa-globe"></i></span>
+                <span class="nav-text">Global Protect</span>
+            </a>
+        </div>
+        <br>
+
+        <div class="nav-item">
+            <a href="/vpn">
+                <span class="nav-icon"><i class="fas fa-circle-nodes"></i></span>
+                <span class="nav-text">VPN</span>
+            </a>
+        </div>
+        <br>
+
+        <div class="nav-item">
+            <a href="/settings">
+                <span class="nav-icon"><i class="fas fa-code"></i></span>
+                <span class="nav-text">Settings</span>
+            </a>
+        </div>
+        <br>
+
+        <div class="nav-item">
+            <a href="/">
+                <span class="nav-icon"><i class="fas fa-info-circle"></i></span>
+                <span class="nav-text">About</span>
+            </a>
+        </div>
+        <br>
+
+        <div class="toggle-btn" onclick="toggleNav()">☰</div>
+    </nav>
+
+    <div id="main-content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner" style="display: none;"></div>
+
+    <script src="{{ url_for('static', filename='js/base.js') }}"></script>
+</body>
+
+</html>
